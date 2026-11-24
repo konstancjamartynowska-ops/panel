@@ -8,7 +8,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap">
 <style>
-/* v11: dwie zakładki (Rozmowa / WhatsApp), przełączniki zamiast przewijania, bez przycisków Kopiuj */
+/* v11: dwie zakładki (Rozmowa / WhatsApp), przełączniki zamiast przewijania, Kopiuj tylko przy WhatsAppie */
 :root{
   --bg:#f8f7f1; --card:#ffffff; --fg:#060606; --muted:#6b6257; --line:#e7e1da;
   --accent:#8a6d45; --accent-soft:#efe6d8; --fill:#f3efe8; --mark:#b3122e;
@@ -41,6 +41,8 @@ header h1{font-family:var(--display);font-weight:600;font-size:1.9rem;line-heigh
 .pl{font-size:.85rem;color:var(--muted);margin:0}
 .pl strong{color:var(--fg)}
 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.copy{align-self:flex-start;font:inherit;font-size:.95rem;font-weight:600;border:none;background:var(--fg);color:#fff;border-radius:12px;padding:12px 22px;cursor:pointer}
+button.copy.ok{background:#2f6f4a}
 footer{color:var(--muted);font-size:.78rem;border-top:1px solid var(--line);padding-top:12px}
 </style>
 </head>
@@ -70,7 +72,7 @@ footer{color:var(--muted);font-size:.78rem;border-top:1px solid var(--line);padd
   </div>
 
   <div class="panel" id="p-wa" role="tabpanel" aria-labelledby="t-wa" hidden>
-    <p class="note"><strong>Wybierz sytuację.</strong> Tekst zaznaczasz i kopiujesz jak zwykle (na telefonie: przytrzymaj palec). Zmieniasz tylko <b style="color:var(--mark)">[Vorname]</b>.</p>
+    <p class="note"><strong>Wybierz sytuację</strong>, kliknij „Kopiuj” i wklej na WhatsAppie. Zmieniasz tylko <b style="color:var(--mark)">[Vorname]</b>.</p>
     <div class="step">
       <div class="chips" id="wa"></div><div id="waText"></div></div>
     <p class="note">Kolejność: nie odebrała → po 1 dniu przypomnienie → po 3 dniach ostatnia wiadomość, potem koniec. Umówiona → potwierdzenie.</p>
@@ -131,11 +133,20 @@ footer{color:var(--muted);font-size:.78rem;border-top:1px solid var(--line);padd
   const card = it => (it.when ? `<span class="when">${esc(it.when)}</span>` : '') +
     `<div class="de" lang="de-CH">${fill(it.de)}</div>` + (it.pl ? `<p class="pl">${it.pl}</p>` : '');
   const one = (id, it) => { $(id).innerHTML = card(it); };
-  function picker(chipsId, textId, list, label){
+  function copyBtn(textId, it){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'copy'; b.textContent = 'Kopiuj';
+    b.addEventListener('click', () => {
+      const ok = () => { b.textContent = 'Skopiowane ✓'; b.classList.add('ok'); setTimeout(() => { b.textContent = 'Kopiuj'; b.classList.remove('ok'); }, 1600); };
+      const fb = () => { const r = document.createRange(); r.selectNodeContents($(textId).querySelector('.de')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Zaznaczone – skopiuj'; };
+      try { navigator.clipboard.writeText(it.de).then(ok, fb); } catch (e) { fb(); }
+    });
+    $(textId).appendChild(b);
+  }
+  function picker(chipsId, textId, list, label, withCopy){
     const box = $(chipsId);
     list.forEach((it, i) => {
       const b = document.createElement('button'); b.type = 'button'; b.textContent = label(it, i);
-      b.addEventListener('click', () => { [...box.children].forEach(c => c.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); $(textId).innerHTML = card(it); });
+      b.addEventListener('click', () => { [...box.children].forEach(c => c.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); $(textId).innerHTML = card(it); if (withCopy) copyBtn(textId, it); });
       box.appendChild(b);
     });
     box.children[0].click();
@@ -145,7 +156,7 @@ footer{color:var(--muted);font-size:.78rem;border-top:1px solid var(--line);padd
   const effects = CALL.slice(1,5).map(it => { const m = it.h.match(/^(\w) · .*?„(.*)”$/); return { ...it, short: m ? m[1] + ' · ' + m[2] : it.h }; });
   picker('eff', 'effText', effects, it => it.short);
   picker('cls', 'clsText', CLOSE, it => it.h);
-  picker('wa', 'waText', WA, it => it.h);
+  picker('wa', 'waText', WA, it => it.h, true);
   const tabs = [['t-call','p-call'],['t-wa','p-wa']];
   tabs.forEach(([t,p]) => $(t).addEventListener('click', () => {
     tabs.forEach(([t2,p2]) => { $(t2).setAttribute('aria-selected', String(t2===t)); $(p2).hidden = t2!==t; });
