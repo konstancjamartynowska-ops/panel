@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skrypt rozmów JOA</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap">
+<style>
+/* Układ: jedna kolumna jak notatnik przy telefonie; teksty gotowe do skopiowania */
+:root{
+  --bg:#f8f7f1; --card:#ffffff; --fg:#060606; --muted:#6b6257; --line:#e7e1da;
+  --accent:#8a6d45; --accent-soft:#efe6d8; --fill:#f3efe8; --ok:#2f6f4a; --ok-soft:#e2efe6; --mark:#b3122e;
+  --display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --body:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding-block:28px 72px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:28px}
+header h1{font-family:var(--display);font-weight:600;font-size:2.4rem;line-height:1.1;margin:0;text-wrap:balance}
+header p{margin:8px 0 0;color:var(--muted);max-width:62ch}
+.eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 6px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);
+  display:flex;gap:8px;flex-wrap:wrap}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav a{font-size:.82rem;font-weight:600;color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:6px 14px;background:var(--card)}
+nav a:hover{border-color:var(--accent)}
+.lead{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.lead h2{margin:0}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.fields{grid-template-columns:1fr}}
+label{display:flex;flex-direction:column;gap:4px;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);min-width:0}
+input,select{font:inherit;font-size:.95rem;letter-spacing:0;text-transform:none;color:var(--fg);background:var(--fill);border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%}
+.hint{font-size:.85rem;color:var(--muted);margin:0}
+.clear{align-self:flex-start;font:inherit;font-size:.82rem;font-weight:600;background:none;border:none;color:var(--accent);cursor:pointer;padding:0;text-decoration:underline}
+section{display:flex;flex-direction:column;gap:14px;scroll-margin-top:70px}
+h2{font-family:var(--display);font-weight:600;font-size:1.75rem;line-height:1.15;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:-6px 0 0;max-width:62ch}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.step-head{display:flex;align-items:baseline;gap:12px}
+.num{font-family:var(--display);font-weight:700;font-size:1.6rem;line-height:1;color:var(--accent);min-width:1.4ch}
+.step h3{margin:0;font-size:1rem;font-weight:600}
+.when{font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border-radius:99px;padding:3px 10px;align-self:flex-start}
+.de{background:var(--fill);border-radius:12px;padding:12px 14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.95rem}
+.de b.ph{color:var(--mark);font-weight:600}
+.de b.filled{font-weight:600}
+.pl{font-size:.85rem;color:var(--muted);margin:0}
+.pl strong{color:var(--fg);font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+button.copy{font:inherit;font-size:.82rem;font-weight:600;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:7px 14px;cursor:pointer}
+button.copy:hover{background:var(--accent-soft)}
+button.copy.ok{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.plan ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.plan li::marker{color:var(--accent);font-weight:700}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.rules{grid-template-columns:1fr}}
+.rules div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.rules h3{margin:0 0 6px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+.rules .yes h3{color:var(--ok)} .rules .no h3{color:var(--mark)}
+.rules ul{margin:0;padding-left:18px;font-size:.9rem}
+footer{color:var(--muted);font-size:.82rem;border-top:1px solid var(--line);padding-top:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">JOA Medical Beauty · nadellose Mesotherapie · 247 statt 427 CHF</p>
+    <h1>Skrypt rozmów z klientkami z reklamy</h1>
+    <p>Joanno, kliknij „Kopiuj” albo czytaj prosto ze strony. Jedyne, co zmieniasz, to <b>[Vorname]</b>: imię klientki z formularza.</p>
+  </header>
+
+  <nav aria-label="Sekcje">
+    <a href="#plan">Plan</a>
+    <a href="#telefon">Telefon</a>
+    <a href="#dopiecie">Termin</a>
+    <a href="#whatsapp">WhatsApp</a>
+  </nav>
+
+  <section id="plan">
+    <h2>Plan na każde zgłoszenie</h2>
+    <div class="plan">
+      <ol>
+        <li><strong>Przychodzi mail, dzwonisz od razu</strong>, najlepiej w ciągu 30 minut.</li>
+        <li><strong>Nie odbiera?</strong> Od razu WhatsApp „Nie odebrała telefonu” i drugi telefon w godzinach, które podała w formularzu.</li>
+        <li><strong>Dalej cisza?</strong> Po 1 dniu przypomnienie, po 3 dniach ostatnia wiadomość. Potem koniec.</li>
+        <li><strong>Umówiona?</strong> Termin do kalendarza i WhatsApp „Potwierdzenie terminu”.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="telefon">
+    <h2>Rozmowa telefoniczna</h2>
+    <p class="sub">Najpierw powitanie. Potem jeden tekst A, B, C albo D, zależnie od tego, co zaznaczyła w formularzu (widzisz to w mailu przy „Efekt”). Zaznaczyła kilka? Weź pierwszy. Na koniec zawsze „Jak wygląda wizyta”.</p>
+    <div id="call"></div>
+  </section>
+
+  <section id="dopiecie">
+    <h2>Jak dopiąć termin</h2>
+    <p class="sub">Zawsze dwa konkretne terminy z Twojego kalendarza, nie pytanie „kiedy Ci pasuje?”.</p>
+    <div id="close"></div>
+  </section>
+
+  <section id="whatsapp">
+    <h2>Wiadomości na WhatsAppa</h2>
+    <p class="sub">W kolejności, w jakiej ich używasz.</p>
+    <div id="wa"></div>
+  </section>
+
+  <footer>JOA Medical Beauty, Hottingerstrasse 35, 8032 Zürich. Nie obiecujemy „schmerzfrei”, „sofort sichtbar” ani konkretnego efektu. O kolejnych zabiegach rozmawiasz w gabinecie, po analizie skóry.</footer>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  const CALL = [
+    { h: 'Powitanie',
+      pl: 'Jeśli nie ma czasu: „Kein Problem. Passt es dir besser heute Abend oder morgen am Vormittag?”',
+      de: 'Hallo [Vorname], hier ist Joanna von JOA Medical Beauty in Zürich. Du hast gerade das Formular zur nadellosen Mesotherapie ausgefüllt. Hast du kurz zwei Minuten?' },
+    { h: 'A · Efekt: „Intensive Feuchtigkeit & Schluss mit Spannungsgefühl”',
+      de: 'Du hast angekreuzt, dass dir vor allem Feuchtigkeit wichtig ist. Genau dafür ist die Mesotherapie da: Hyaluron und Vitamine kommen tiefer in die Haut, als es eine Creme schafft. Viele Kundinnen sagen mir danach, dass sich ihre Haut praller und frischer anfühlt.' },
+    { h: 'B · Efekt: „Einen frischen, wachen Teint statt müdem Blick”',
+      de: 'Du hast angekreuzt, dass du dir einen frischen, wachen Teint wünschst. Oft fehlt der Haut einfach Feuchtigkeit. Mit der Mesotherapie bekommt sie Hyaluron und Vitamine, und viele Kundinnen sagen mir danach, dass ihr Teint frischer und gleichmässiger wirkt.' },
+    { h: 'C · Efekt: „Natürlichen Glow – auch komplett ohne Make-up”',
+      de: 'Du hast angekreuzt, dass du dich auch ohne Make-up wohlfühlen möchtest. Viele Kundinnen sagen mir nach der Mesotherapie, dass ihre Haut glatter und frischer wirkt, auch ganz ohne Make-up.' },
+    { h: 'D · Efekt: „Endlich mal 90 Minuten Auszeit nur für mich”',
+      de: 'Du hast angekreuzt, dass du dir endlich mal 90 Minuten nur für dich wünschst. Bei mir kannst du dich einfach zurücklehnen, und deine Haut bekommt dabei Hyaluron und Vitamine.' },
+    { h: 'Jak wygląda wizyta (po A, B, C albo D)',
+      pl: 'Po cenie zrób krótką pauzę i od razu przejdź do terminu.',
+      de: 'So läuft dein Termin: Du bist 90 Minuten bei mir. Zuerst machen wir eine Hautanalyse mit LumiScan, dann ein Peeling, danach die nadellose Mesotherapie und zum Schluss eine Pflegemaske. Du bezahlst 247 statt 427 Franken, die Hautanalyse ist schon dabei.' }
+  ];
+
+  const CLOSE = [
+    { h: 'Proponujesz dwa terminy',
+      pl: '<strong>PRZYKŁAD: dni i godziny wstawiasz sama z kalendarza.</strong>',
+      de: 'Ich hätte am Dienstag um 10 Uhr oder am Donnerstag um 17 Uhr frei. Was passt dir besser?' },
+    { h: 'Wybrała termin',
+      pl: 'Powtórz dzień i godzinę na głos. Po rozmowie: termin do kalendarza i WhatsApp „Potwierdzenie terminu”.',
+      de: 'Super, dann trage ich dich ein. Ich schicke dir gleich eine Bestätigung per WhatsApp. Ich freue mich auf dich!' },
+    { h: 'Waha się albo chce się zastanowić',
+      pl: 'Bez naciskania. Po rozmowie WhatsApp „Podsumowanie” i odezwij się w dniu, który ustaliłyście.',
+      de: 'Kein Problem. Ich schicke dir alles kurz per WhatsApp, dann kannst du in Ruhe schauen. Darf ich mich übermorgen nochmals kurz melden?' }
+  ];
+
+  const WA = [
+    { h: 'Nie odebrała telefonu', when: 'od razu po nieodebranym telefonie',
+      de: 'Hallo [Vorname], hier ist Joanna von JOA Medical Beauty 😊 Danke für deine Anfrage zur nadellosen Mesotherapie! Ich habe gerade versucht, dich anzurufen. Ich probiere es gern nochmals zu der Zeit, die du im Formular angegeben hast. Oder sollen wir lieber kurz hier schreiben?' },
+    { h: 'Przypomnienie', when: 'po 1 dniu bez odpowiedzi',
+      de: 'Hallo [Vorname], hier ist nochmals Joanna von JOA 😊 Ich halte dir gern einen der 14 Plätze für 247 statt 427 Franken frei, Hautanalyse inklusive. Möchtest du lieber diese oder nächste Woche kommen?' },
+    { h: 'Ostatnia wiadomość', when: 'po 3 dniach, potem koniec',
+      de: 'Hallo [Vorname], hier ist Joanna. Ich möchte dich nicht stören, darum ist das meine letzte Nachricht. Wenn es im Moment nicht passt, ist das völlig okay. Soll ich dir deinen Platz noch freihalten?' },
+    { h: 'Podsumowanie', when: 'gdy chce się zastanowić',
+      de: 'Wie besprochen hier alles auf einen Blick:\n\nNadellose Mesotherapie, 90 Minuten:\n1. Hautanalyse mit LumiScan\n2. Peeling\n3. Nadellose Mesotherapie mit Hyaluron und Vitaminen\n4. Pflegemaske\n\nPreis: 247 CHF statt 427 CHF, Hautanalyse inklusive. Nur 14 Plätze.\n📍 Hottingerstrasse 35, 8032 Zürich\n\nIch melde mich wie besprochen wieder.' },
+    { h: 'Potwierdzenie terminu', when: 'zaraz po umówieniu',
+      de: 'Schön, dass es geklappt hat! Dein Termin ist eingetragen.\n\n📍 JOA Medical Beauty, Hottingerstrasse 35, 8032 Zürich\n⏱ Plane bitte etwa 90 Minuten ein.\nPreis: 247 CHF statt 427 CHF, Hautanalyse inklusive.\n\nFalls etwas dazwischenkommt, schreib mir bitte kurz. Bis bald, Joanna' },
+    { h: 'Przypomnienie dzień przed wizytą', when: 'jeśli kalendarz nie wysyła go sam',
+      de: 'Hallo [Vorname], hier ist Joanna 😊 Kleine Erinnerung: Morgen ist dein Termin bei mir an der Hottingerstrasse 35. Ich freue mich auf dich!' }
+  ];
+
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const fillHtml = t => esc(t).replace(/\[Vorname\]/g,'<b class="ph">[Vorname]</b>');
+
+  function block(item){
+    const el = document.createElement('div');
+    el.className = 'step';
+    el.innerHTML =
+      `<div class="step-head"><h3>${esc(item.h)}</h3></div>` +
+      (item.when ? `<span class="when">${esc(item.when)}</span>` : '') +
+      `<div class="de" lang="de-CH">${fillHtml(item.de)}</div>` +
+      (item.pl ? `<p class="pl">${item.pl}</p>` : '') +
+      `<div class="row"><button class="copy" type="button">Kopiuj</button></div>`;
+    const de = el.querySelector('.de'), btn = el.querySelector('.copy');
+    btn.addEventListener('click', () => {
+      const done = () => { btn.textContent = 'Skopiowane ✓'; btn.classList.add('ok'); setTimeout(() => { btn.textContent = 'Kopiuj'; btn.classList.remove('ok'); }, 1600); };
+      const fallback = () => { const r = document.createRange(); r.selectNodeContents(de); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Zaznaczone, skopiuj ⌘C'; };
+      try { navigator.clipboard.writeText(item.de).then(done, fallback); } catch (e) { fallback(); }
+    });
+    return el;
+  }
+  const mount = (id, list) => { const box = $(id); box.style.display = 'flex'; box.style.flexDirection = 'column'; box.style.gap = '12px'; list.forEach(it => box.appendChild(block(it))); };
+  mount('call', CALL); mount('close', CLOSE); mount('wa', WA);
+})();
+</script>
+
+</body>
+</html>
