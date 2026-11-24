@@ -3,499 +3,192 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Panel klientki JOA</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Skrypt rozmów JOA</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap">
 <style>
-  :root{
-    --cream:#f8f7f1; --paper:#ffffff; --beige:#e7e1da; --sand:#d9d0c5; --ink:#060606; --soft:#272521; --muted:#6f675e;
-    --done:#2f6b4f; --done-bg:#e4efe8; --now:#7a5210; --now-bg:#f5e8cf; --you:#7d2f2a; --you-bg:#f4e1de;
-    --serif:"Cormorant Garamond",Georgia,serif; --sans:Montserrat,system-ui,sans-serif;
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;background:var(--cream);color:var(--ink);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
-  h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.08;margin:0;letter-spacing:-.005em}
-  h1{font-size:clamp(44px,7.4vw,84px)}
-  h2{font-size:clamp(32px,4.6vw,48px)}
-  h3{font-size:24px;line-height:1.2}
-  p{margin:0 0 12px}
-  .eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
-  .muted{color:var(--muted)}
-
-  .top{position:sticky;top:0;z-index:5;background:rgba(248,247,241,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--beige)}
-  .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:58px}
-  .logo{font-family:var(--serif);font-size:24px;letter-spacing:.2em;font-weight:600}
-  .logo small{font-family:var(--sans);font-size:9.5px;letter-spacing:.3em;font-weight:500;margin-left:10px;color:var(--muted)}
-  nav{display:flex;gap:22px;font-size:13px;font-weight:500}
-  nav a{color:var(--soft);text-decoration:none;padding:6px 0;border-bottom:1px solid transparent}
-  nav a:hover{border-color:var(--ink)}
-
-  .hero{display:grid;grid-template-columns:1.25fr .9fr;gap:48px;align-items:end;padding:64px 0 56px}
-  .hero h1 em{font-style:italic}
-  .hero .lead{font-size:18px;color:var(--soft);max-width:44ch;margin:22px 0 32px}
-  .hero figure{margin:0;position:relative}
-  .hero img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:220px 220px 6px 6px}
-  .meter{border-top:1px solid var(--ink);padding-top:16px;max-width:440px}
-  .meter .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-  .meter .num{font-family:var(--serif);font-size:44px;line-height:1}
-  .meter .num span{font-size:22px;color:var(--muted)}
-  .bar{height:4px;background:var(--sand);margin:14px 0 10px;position:relative}
-  .bar i{position:absolute;left:0;top:0;bottom:0;width:75%;background:var(--ink)}
-  .meter small{color:var(--muted);font-size:13.5px}
-
-  section{padding:64px 0;border-top:1px solid var(--beige);scroll-margin-top:58px}
-  .head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:32px}
-  .head p{max-width:46ch;margin:0;color:var(--muted)}
-
-  .todo{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--ink);background:var(--paper)}
-  .todo article{padding:28px 26px 26px;border-right:1px solid var(--beige);display:flex;flex-direction:column}
-  .todo article:last-child{border-right:0}
-  .todo .n{font-family:var(--serif);font-size:54px;line-height:1;color:var(--sand);margin-bottom:14px}
-  .todo p{color:var(--soft);font-size:15px;margin:10px 0 18px;flex:1}
-  .pill{display:inline-block;align-self:flex-start;white-space:nowrap;font-size:11.5px;font-weight:600;letter-spacing:.04em;padding:5px 11px;border-radius:99px}
-  .p-done{background:var(--done-bg);color:var(--done)} .p-now{background:var(--now-bg);color:var(--now)}
-  .p-you{background:var(--you-bg);color:var(--you)} .p-later{background:var(--beige);color:var(--muted)}
-
-  .phases{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-  .phase h3{display:flex;align-items:baseline;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--ink);margin-bottom:6px}
-  .phase h3 b{font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.2em;color:var(--muted)}
-  .phase ul{list-style:none;margin:0;padding:0}
-  .phase li{display:grid;grid-template-columns:22px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--beige)}
-  .phase li strong{font-weight:500;display:block;line-height:1.35}
-  .phase li small{display:block;color:var(--muted);font-size:13px;margin-top:3px;line-height:1.4}
-  .dot{width:20px;height:20px;border-radius:50%;margin-top:2px;border:1.5px solid var(--sand);display:grid;place-items:center;font-size:11px;line-height:1}
-  .dot.done{background:var(--ink);border-color:var(--ink);color:var(--cream)}
-  .dot.now{border-color:var(--now);background:var(--now-bg)}
-  .dot.now::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--now)}
-  .dot.you{border-color:var(--you);background:var(--you-bg)}
-  .dot.you::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--you)}
-  .tag{font-size:11.5px;font-weight:600;letter-spacing:.03em;margin-top:5px;display:block}
-  .tag.now{color:var(--now)} .tag.you{color:var(--you)}
-  .legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:22px;font-size:13px;color:var(--muted)}
-  .legend span{display:flex;align-items:center;gap:8px}
-  .legend .dot{margin:0;width:14px;height:14px;font-size:8px} .legend .dot::after{width:5px;height:5px}
-
-  .offer{background:var(--ink);color:var(--cream);border:0;padding:0}
-  .offer .wrap{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:0;max-width:none}
-  .offer .txt{padding:64px 48px 64px max(24px,calc(50vw - 496px))}
-  .offer .eyebrow{color:#b9b0a4}
-  .offer .price{font-family:var(--serif);font-size:clamp(52px,7vw,84px);line-height:1;margin:18px 0 6px}
-  .offer .price{white-space:nowrap}
-  .offer .price .was{display:block;font-size:.36em;color:#b9b0a4;margin-top:10px}
-  .offer .price s{text-decoration-thickness:1px}
-  .offer ul{list-style:none;padding:0;margin:26px 0 0;border-top:1px solid #3a3733}
-  .offer li{padding:13px 0;border-bottom:1px solid #3a3733;display:flex;justify-content:space-between;gap:16px;font-size:15px}
-  .offer li span:last-child{color:#b9b0a4;text-align:right}
-  .offer .img{background:url(wnetrze.jpg) center/cover;min-height:340px}
-
-  .ads{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  .ad{background:var(--paper);border:1px solid var(--beige);padding:26px 24px;display:flex;flex-direction:column}
-  .ad blockquote{margin:16px 0 22px;font-family:var(--serif);font-size:25px;line-height:1.22;flex:1}
-  .ad .hl{border-top:1px solid var(--beige);padding-top:14px;font-size:13.5px;color:var(--muted)}
-  .ad .hl b{display:block;color:var(--ink);font-weight:500;font-size:14.5px;margin-top:3px}
-
-  .ad .why{font-size:14px;color:var(--soft);margin:14px 0 0}
-  .ad .why b{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:4px}
-  .gift{display:grid;grid-template-columns:260px 1fr;gap:36px;align-items:center;background:var(--paper);border:1px solid var(--ink);padding:26px;margin-top:20px}
-  .gift video{display:block;width:100%;aspect-ratio:9/16;background:var(--ink);border-radius:6px}
-  .gift blockquote{margin:14px 0 18px;font-family:var(--serif);font-size:30px;line-height:1.18}
-  .gift p{color:var(--soft);font-size:15px;max-width:52ch}
-  .principle{border-left:2px solid var(--ink);padding:4px 0 4px 18px;margin:0 0 28px;max-width:70ch;color:var(--soft)}
-  .qs{list-style:none;counter-reset:q;margin:0;padding:0;columns:2;column-gap:48px}
-  .qs li{counter-increment:q;break-inside:avoid;display:grid;grid-template-columns:40px 1fr;gap:6px;padding:14px 0;border-bottom:1px solid var(--beige)}
-  .qs li::before{content:counter(q,decimal-leading-zero);font-family:var(--serif);font-size:24px;line-height:1.15;color:var(--muted)}
-  .qs small{display:block;color:var(--muted);font-size:13px;margin-top:3px}
-  .two{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
-  .shots{list-style:none;counter-reset:s;margin:0;padding:0}
-  .shots li{counter-increment:s;display:grid;grid-template-columns:44px 1fr;gap:6px;padding:16px 0;border-bottom:1px solid var(--beige)}
-  .shots li::before{content:counter(s,decimal-leading-zero);font-family:var(--serif);font-size:26px;line-height:1.1;color:var(--muted)}
-  .shots li.key::before{color:var(--ink)}
-  .shots strong{font-weight:600}
-  .grp{font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:26px 0 2px}
-  .grp:first-child{margin-top:0}
-  .shots li{grid-template-columns:44px 1fr 30px;align-items:start;cursor:pointer}
-  .tick{appearance:none;-webkit-appearance:none;width:24px;height:24px;margin:2px 0 0;border:1.5px solid var(--ink);border-radius:50%;background:var(--paper);cursor:pointer;display:grid;place-items:center;flex:none}
-  .tick:checked{background:var(--ink)}
-  .tick:checked::after{content:"✓";color:var(--cream);font:600 14px/1 var(--sans)}
-  .tick:focus-visible{outline:2px solid var(--now);outline-offset:2px}
-  li.got>div,article.got h3,article.got p{opacity:.45;text-decoration:line-through;text-decoration-thickness:1px}
-  .count{display:flex;align-items:center;gap:14px;margin:0 0 22px;font-size:14px;color:var(--soft)}
-  .count b{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1}
-  .count .bar{flex:1;max-width:260px;margin:0}
-  .todo .row2{display:flex;justify-content:space-between;align-items:center;gap:12px}
-  .hint{font-size:13px;color:var(--muted);margin-top:14px}
-  .howto{list-style:none;counter-reset:h;margin:0;padding:0}
-  .howto li{counter-increment:h;display:grid;grid-template-columns:44px 1fr;gap:6px;padding:15px 0;border-bottom:1px solid var(--beige)}
-  .howto li::before{content:counter(h,decimal-leading-zero);font-family:var(--serif);font-size:26px;line-height:1.1;color:var(--ink)}
-  .howto small{display:block;color:var(--muted);font-size:13px;margin-top:4px}
-  .howto code,.note code{font:500 14px/1.3 ui-monospace,Menlo,monospace;background:var(--paper);border:1px solid var(--beige);padding:2px 6px;white-space:nowrap}
-  .qs textarea{display:block;width:100%;margin-top:10px;min-height:44px;resize:vertical;font:400 15px/1.5 var(--sans);color:var(--ink);background:var(--paper);border:1px solid var(--sand);border-radius:4px;padding:9px 11px}
-  .qs textarea:focus{outline:none;border-color:var(--ink)}
-  .qs textarea::placeholder{color:#a79f94}
-  .qs li.answered::before{color:var(--ink)}
-  .qbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px}
-  .btn{font:600 13px/1 var(--sans);letter-spacing:.04em;background:var(--ink);color:var(--cream);border:1px solid var(--ink);padding:12px 18px;border-radius:99px;cursor:pointer}
-  .btn:hover{background:var(--soft)}
-  .qbar span{font-size:13.5px;color:var(--muted)}
-  .note{background:var(--paper);border:1px solid var(--beige);padding:26px 26px 20px}
-  .note h3{margin-bottom:14px}
-  .note ul{margin:0;padding-left:18px} .note li{margin-bottom:8px;color:var(--soft)}
-
-  .site{display:grid;grid-template-columns:1fr 1fr;gap:48px}
-  .check{background:var(--paper);border:1px solid var(--ink);padding:26px}
-  .check code{display:block;font:500 17px/1.3 ui-monospace,Menlo,monospace;background:var(--cream);border:1px dashed var(--sand);padding:14px 16px;margin:14px 0;word-break:break-all}
-
-  .answers{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:28px}
-  .ans{background:var(--paper);border:1px solid var(--beige);padding:26px}
-  .ans h3{margin:10px 0 12px}
-  .ans p,.ans li{font-size:15px;color:var(--soft)}
-  .ans ul{margin:0 0 12px;padding-left:18px} .ans li{margin-bottom:6px}
-  .ans .verdict{border-top:1px solid var(--beige);padding-top:12px;margin:14px 0 0;color:var(--ink);font-weight:500}
-  .rules{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-  .rules div{border-top:1px solid var(--ink);padding-top:16px}
-  .rules h3{font-size:22px;margin-bottom:8px}
-  .rules p{font-size:14.5px;color:var(--soft);margin:0}
-
-  .ad{border:0;border-radius:16px;padding:28px 26px 26px;background:var(--tint);box-shadow:0 1px 0 rgba(6,6,6,.04)}
-  .ad:nth-child(1){--tint:#f6e7df;--deep:#8a4a35}
-  .ad:nth-child(2){--tint:#e7eee6;--deep:#3f6149}
-  .ad:nth-child(3){--tint:#f3ead6;--deep:#7a5a1c}
-  .ad .eyebrow{align-self:flex-start;background:rgba(255,255,255,.7);color:var(--deep);padding:6px 12px;border-radius:99px;letter-spacing:.16em}
-  .ad blockquote{font-size:27px}
-  .ad .hl{border-top:1px solid rgba(6,6,6,.12)}
-  .ad .why b{color:var(--deep)}
-  .gift{border:0;border-radius:16px;background:#e9e6f0;--deep:#4d4573;padding:28px}
-  .gift .eyebrow{display:inline-block;background:rgba(255,255,255,.7);color:var(--deep);padding:6px 12px;border-radius:99px;letter-spacing:.16em}
-  .gift video{border-radius:12px}
-  .ans.mail{background:#e4edf0;border:0;border-radius:16px;padding:30px}
-  .ans.mail .eyebrow{display:inline-block;background:rgba(255,255,255,.75);color:#2f5563;padding:6px 12px;border-radius:99px;letter-spacing:.16em}
-  .ans.mail .verdict{border-top-color:rgba(6,6,6,.12)}
-  a{color:inherit;text-decoration-thickness:1px;text-underline-offset:3px}
-  .todo{display:block;border:0;border-top:1px solid var(--ink);background:none}
-  .todo article{display:grid;grid-template-columns:44px 1fr auto;gap:8px 16px;align-items:center;padding:18px 0;border:0;border-bottom:1px solid var(--beige)}
-  .todo .n{font-size:26px;color:var(--muted);margin:0;line-height:1}
-  .todo h3{font-size:24px}
-  .todo p{margin:3px 0 0;font-size:14.5px;color:var(--muted);flex:none}
-  .todo .row2{gap:18px}
-  .todo .pill{background:none;padding:0;border-radius:0;font-size:12.5px;letter-spacing:.02em;align-self:center}
-  .todo .pill::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin-right:8px;vertical-align:1px}
-  @media (max-width:860px){
-    .todo article{grid-template-columns:32px 1fr;border-bottom:1px solid var(--beige)}
-    .todo .row2{grid-column:2;justify-content:space-between}
-  }
-  footer{border-top:1px solid var(--beige);padding:28px 0 56px;color:var(--muted);font-size:13.5px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-
-  @media (max-width:860px){
-    .wrap{padding:0 16px}
-    nav{display:none}
-    .hero{grid-template-columns:1fr;gap:32px;padding:40px 0}
-    .hero figure{order:-1;max-width:300px;margin-inline:auto}
-    .todo,.phases,.ads,.two,.site,.gift,.answers{grid-template-columns:1fr}
-    .gift video{max-width:240px;margin-inline:auto}
-    .howto code,.note code{display:inline-block;white-space:nowrap;font-size:12.5px;max-width:100%}
-    .qs{columns:1}
-    .rules{grid-template-columns:1fr 1fr}
-    .todo article{border-right:0;border-bottom:1px solid var(--beige)}
-    .todo article:last-child{border-bottom:0}
-    .offer .wrap{grid-template-columns:1fr}
-    .offer .txt{padding:48px 16px}
-    .offer .img{min-height:240px}
-    section{padding:48px 0}
-    .two,.site{gap:28px}
-  }
+/* Układ: jedna kolumna jak notatnik przy telefonie; kopiowanie tylko przy WhatsAppie */
+:root{
+  --bg:#f8f7f1; --card:#ffffff; --fg:#060606; --muted:#6b6257; --line:#e7e1da;
+  --accent:#8a6d45; --accent-soft:#efe6d8; --fill:#f3efe8; --ok:#2f6f4a; --ok-soft:#e2efe6; --mark:#b3122e;
+  --display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --body:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding-block:28px 72px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:28px}
+header h1{font-family:var(--display);font-weight:600;font-size:2.4rem;line-height:1.1;margin:0;text-wrap:balance}
+header p{margin:8px 0 0;color:var(--muted);max-width:62ch}
+.eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 6px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);
+  display:flex;gap:8px;flex-wrap:wrap}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav a{font-size:.82rem;font-weight:600;color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:6px 14px;background:var(--card)}
+nav a:hover{border-color:var(--accent)}
+.lead{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.lead h2{margin:0}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.fields{grid-template-columns:1fr}}
+label{display:flex;flex-direction:column;gap:4px;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);min-width:0}
+input,select{font:inherit;font-size:.95rem;letter-spacing:0;text-transform:none;color:var(--fg);background:var(--fill);border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%}
+.hint{font-size:.85rem;color:var(--muted);margin:0}
+.clear{align-self:flex-start;font:inherit;font-size:.82rem;font-weight:600;background:none;border:none;color:var(--accent);cursor:pointer;padding:0;text-decoration:underline}
+section{display:flex;flex-direction:column;gap:14px;scroll-margin-top:70px}
+h2{font-family:var(--display);font-weight:600;font-size:1.75rem;line-height:1.15;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:-6px 0 0;max-width:62ch}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.step-head{display:flex;align-items:baseline;gap:12px}
+.num{font-family:var(--display);font-weight:700;font-size:1.6rem;line-height:1;color:var(--accent);min-width:1.4ch}
+.step h3{margin:0;font-size:1rem;font-weight:600}
+.when{font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border-radius:99px;padding:3px 10px;align-self:flex-start}
+.de{background:var(--fill);border-radius:12px;padding:12px 14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.95rem}
+.de b.ph{color:var(--mark);font-weight:600}
+.de b.filled{font-weight:600}
+.pl{font-size:.85rem;color:var(--muted);margin:0}
+.pl strong{color:var(--fg);font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+button.copy{font:inherit;font-size:.82rem;font-weight:600;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:7px 14px;cursor:pointer}
+button.copy:hover{background:var(--accent-soft)}
+button.copy.ok{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.plan ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.plan li::marker{color:var(--accent);font-weight:700}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.rules{grid-template-columns:1fr}}
+.rules div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.rules h3{margin:0 0 6px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+.rules .yes h3{color:var(--ok)} .rules .no h3{color:var(--mark)}
+.rules ul{margin:0;padding-left:18px;font-size:.9rem}
+footer{color:var(--muted);font-size:.82rem;border-top:1px solid var(--line);padding-top:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 
-<div class="top"><div class="wrap">
-  <div class="logo">JOA<small>MEDICAL BEAUTY</small></div>
-  <nav>
-    <a href="#teraz">Teraz od Ciebie</a>
-    <a href="#postepy">Postępy</a>
-    <a href="#reklamy">Reklamy</a>
-    
-    <a href="#strona">Strona i newsletter</a>
-  </nav>
-</div></div>
-
 <div class="wrap">
-
-  <header class="hero">
-    <div>
-      <div class="eyebrow">Panel klientki · stan na 24.11.2026</div>
-      <h1 style="margin-top:18px">Witaj, <em>Joanno.</em></h1>
-      <p class="lead">Tu widzisz, na jakim etapie jest Twoja kampania, co jest gotowe i czego jeszcze potrzebuję. Ty dajesz materiały i decyzje, ja robię z nich reklamy.</p>
-      <div class="meter">
-        <div class="row"><div class="num">9<span> / 12 kroków</span></div><span class="pill p-done">w toku</span></div>
-        <div class="bar" role="progressbar" aria-valuenow="9" aria-valuemin="0" aria-valuemax="12"><i></i></div>
-        <small>Kampania jest ustawiona i rusza po płatności.</small>
-      </div>
-    </div>
-    <figure><img src="witryna.jpg" alt="Witryna gabinetu JOA Medical Beauty z logo"></figure>
+  <header>
+    <p class="eyebrow">JOA Medical Beauty · nadellose Mesotherapie · 247 statt 427 CHF</p>
+    <h1>Skrypt rozmów z klientkami z reklamy</h1>
+    <p>Joanno, przy telefonie czytasz prosto z tej strony. Wiadomości na WhatsAppa kopiujesz przyciskiem „Kopiuj”. Jedyne, co zmieniasz, to <b>[Vorname]</b>: imię klientki.</p>
   </header>
 
-  <section id="teraz">
-    <div class="head">
-      <div><div class="eyebrow">Najważniejsze</div><h2>Teraz od Ciebie</h2></div>
-      <p>To, co odblokowuje start. Reszta jest po mojej stronie. Kliknij kółko, gdy coś jest zrobione.</p>
-    </div>
-    <div class="todo">
-      <article><div class="n">01</div><div class="tx"><h3>Umowa i dane do faktury</h3><p>Umowa podpisana, dziękuję. Został ostatni krok: płatność przez Useme.</p></div><span class="pill p-now">Płatność przez Useme</span></article>
-      <article><div class="n">02</div><div class="tx"><h3>Dostęp do konta reklamowego</h3><p>Dostęp działa, dziękuję za cierpliwość.</p></div><span class="pill p-done">Zrobione</span></article>
-      <article><div class="n">03</div><div class="tx"><h3>Trzy reklamy do obejrzenia</h3><p>Wszystkie trzy reklamy są zmontowane, z lektorem po niemiecku i napisami. Obejrzyj je i daj znać, czy coś zmienić.</p></div><span class="pill p-now">Do obejrzenia</span></article>
-    </div>
-  </section>
+  <nav aria-label="Sekcje">
+    <a href="#plan">Plan</a>
+    <a href="#telefon">Telefon</a>
+    <a href="#dopiecie">Termin</a>
+    <a href="#whatsapp">WhatsApp</a>
+  </nav>
 
-  <section id="dostep">
-    <div class="head">
-      <div><div class="eyebrow">Krok po kroku</div><h2>Dostęp do konta reklamowego</h2></div>
-      <p>Robimy to razem na Zoomie, zajmuje ok. 10 minut. Nazwy przycisków w Meta mogą się nieznacznie różnić.</p>
-    </div>
-    <div>
-      <ol class="howto">
-        <li><div><strong>Otwórz na komputerze</strong> <code>business.facebook.com/settings</code> i zaloguj się swoim profilem na Facebooku.</div></li>
-        <li><div>Po lewej wybierz <strong>Użytkownicy → Osoby</strong>.<small>Po niemiecku: Nutzer → Personen. Najpierw sprawdzimy razem, kto ma dziś dostęp do konta.</small></div></li>
-        <li><div>Kliknij <strong>Zaproś osoby</strong> i wpisz mój adres e-mail: <code>konstancjamartynowska@gmail.com</code><small>Po niemiecku: Personen einladen.</small></div></li>
-        <li><div>Włącz <strong>pełną kontrolę (administrator)</strong>.<small>Jest potrzebna, żeby zapytania z formularza trafiały automatycznie do systemu, z którego odpisujemy klientkom.</small></div></li>
-        <li><div><strong>Przypisz mi trzy zasoby:</strong> stronę na Facebooku, konto reklamowe i konto na Instagramie. Przy każdym włącz pełną kontrolę.<small>Jeśli Instagrama nie ma na liście: Konta → Konta na Instagramie → Dodaj, logujesz się na profil gabinetu.</small></div></li>
-        <li><div>Kliknij <strong>Wyślij zaproszenie</strong>. Gotowe.</div></li>
+  <section id="plan">
+    <h2>Plan na każde zgłoszenie</h2>
+    <div class="plan">
+      <ol>
+        <li><strong>Przychodzi mail, dzwonisz od razu</strong>, najlepiej w ciągu 30 minut.</li>
+        <li><strong>Nie odbiera?</strong> Od razu WhatsApp „Nie odebrała telefonu” i drugi telefon w godzinach, które podała w formularzu.</li>
+        <li><strong>Dalej cisza?</strong> Po 1 dniu przypomnienie, po 3 dniach ostatnia wiadomość. Potem koniec.</li>
+        <li><strong>Umówiona?</strong> Termin do kalendarza i WhatsApp „Potwierdzenie terminu”.</li>
       </ol>
     </div>
   </section>
 
-  <section id="postepy">
-    <div class="head">
-      <div><div class="eyebrow">Harmonogram</div><h2>Postępy</h2></div>
-      <p>Trzy etapy od materiałów do pierwszych zapytań od klientek.</p>
-    </div>
-    <div class="phases">
-      <div class="phase">
-        <h3><b>ETAP 1</b>Przygotowanie</h3>
-        <ul>
-          <li><span class="dot done">✓</span><div><strong>Rozmowa i oferta</strong><small>247 CHF zamiast 427 CHF, zabieg razem z analizą skóry, 14 miejsc</small></div></li>
-          <li><span class="dot done">✓</span><div><strong>Materiały od Ciebie</strong></div></li>
-          <li><span class="dot done">✓</span><div><strong>Wybór ujęć i pierwszych klatek</strong></div></li>
-          <li><span class="dot done">✓</span><div><strong>Sprawdzenie Twojej strony w Google</strong><small>jedna ważna rzecz, opis niżej</small></div></li>
-        </ul>
-      </div>
-      <div class="phase">
-        <h3><b>ETAP 2</b>Kreacje</h3>
-        <ul>
-          <li><span class="dot done">✓</span><div><strong>Teksty reklam, trzy różne kąty</strong><small>lektor nagrany według Twojej wersji tekstu</small></div></li>
-          <li><span class="dot done">✓</span><div><strong>Dodatkowe ujęcia</strong><small>mam już wszystko, czego potrzebuję, dziękuję</small></div></li>
-          <li><span class="dot done">✓</span><div><strong>Montaż trzech reklam</strong><small>lektor po niemiecku i napisy</small></div></li>
-          <li><span class="dot done">✓</span><div><strong>Formularz i skrypt rozmów</strong><small>formularz po niemiecku jest gotowy; o każdym zgłoszeniu dostajesz od razu maila. <a href="skrypt/">Skrypt rozmów z klientkami</a></small></div></li>
-        </ul>
-      </div>
-      <div class="phase">
-        <h3><b>ETAP 3</b>Start</h3>
-        <ul>
-          <li><span class="dot now"></span><div><strong>Umowa i płatność</strong><span class="tag now">Umowa podpisana, płatność przez Useme</span></div></li>
-          <li><span class="dot done">✓</span><div><strong>Dostęp do konta reklamowego</strong></div></li>
-          <li><span class="dot"></span><div><strong>Start kampanii</strong><small>po podpisie i płatności</small></div></li>
-          <li><span class="dot"></span><div><strong>Pierwszy raport z wyników</strong><small>po 7 dniach od startu</small></div></li>
-        </ul>
-      </div>
-    </div>
-    <div class="legend">
-      <span><i class="dot done">✓</i>gotowe</span>
-      <span><i class="dot now"></i>w toku</span>
-      <span><i class="dot you"></i>czeka na Ciebie</span>
-      <span><i class="dot"></i>później</span>
-    </div>
+  <section id="telefon">
+    <h2>Rozmowa telefoniczna</h2>
+    <p class="sub">Czytasz prosto ze strony, nic nie kopiujesz. Kolejność: 1) powitanie, 2) jeden z tekstów A–D, 3) „Jak wygląda wizyta”.<br><br><b>Skąd wiesz, który tekst A–D?</b> Klientka w formularzu reklamy wybiera, jaki efekt chce osiągnąć. Jej odpowiedź jest w mailu o nowym zgłoszeniu, który dostajesz. Czytasz ten tekst, który pasuje do jej odpowiedzi. Wybrała kilka? Weź pierwszy.</p>
+    <div id="call"></div>
   </section>
+
+  <section id="dopiecie">
+    <h2>Jak dopiąć termin</h2>
+    <p class="sub">Zawsze dwa konkretne terminy z Twojego kalendarza, nie pytanie „kiedy Ci pasuje?”.</p>
+    <div id="close"></div>
+  </section>
+
+  <section id="whatsapp">
+    <h2>Wiadomości na WhatsAppa</h2>
+    <p class="sub">W kolejności, w jakiej ich używasz.</p>
+    <div id="wa"></div>
+  </section>
+
+  <footer>JOA Medical Beauty, Hottingerstrasse 35, 8032 Zürich. Nie obiecujemy „schmerzfrei”, „sofort sichtbar” ani konkretnego efektu. O kolejnych zabiegach rozmawiasz w gabinecie, po analizie skóry.</footer>
 </div>
 
-<section class="offer">
-  <div class="wrap">
-    <div class="txt">
-      <div class="eyebrow">Oferta w reklamach</div>
-      <div class="price">247 CHF<span class="was">statt <s>427 CHF</s></span></div>
-      <p style="color:#d8d1c6;margin:0">Mezoterapia bez igieł (Mesoject), 90 minut, razem z analizą skóry. Pierwsza wizyta.</p>
-      <ul>
-        <li><span>Zabieg Mesoject</span><span>280 CHF</span></li>
-        <li><span>Analiza skóry Lumiscan</span><span>147 CHF</span></li>
-        <li><span>Liczba miejsc</span><span>14 kobiet z Zürich</span></li>
-        <li><span>Kontakt z klientką</span><span>formularz, potem telefon lub WhatsApp</span></li>
-      </ul>
-    </div>
-    <div class="img" role="img" aria-label="Wnętrze gabinetu"></div>
-  </div>
-</section>
-
-<div class="wrap">
-
-  <section id="reklamy" style="border-top:0">
-    <div class="head">
-      <div><div class="eyebrow">Do akceptacji</div><h2>Cztery reklamy</h2></div>
-      <p>Pełne teksty i formularz wysłałam Ci do przeczytania. Tu widzisz początek każdej reklamy.</p>
-    </div>
-    <p class="principle"><strong>Dlaczego kilka kątów, a nie jedna reklama?</strong> Meta sama dobiera odbiorców do treści reklamy. Każdy kąt mówi do innej kobiety i innym powodem, więc razem docieramy szerzej, a po kilku dniach widać, który przynosi zapytania. Żadna z reklam nie zaczyna się od opowieści o wizycie w gabinecie. Pierwsze zdanie mówi o kobiecie, która ogląda reklamę, a nie o nas.</p>
-    <div class="ads">
-      <article class="ad"><div class="eyebrow">Reklama 1 · sucha zimowa skóra i cena</div><blockquote>Achtung Zürich! Wir suchen 14 Frauen, die genug haben von trockener Winterhaut.</blockquote><div class="hl">Nagłówek<b>Trockene Winterhaut? 247 statt 427 CHF</b></div><p class="why"><b>Dlaczego ten kąt</b>Mówi o czymś, co kobieta czuje właśnie teraz, zimą: pije wodę, dba o pielęgnację, a skóra i tak jest sucha. Cena i limit miejsc są widoczne od pierwszej sekundy. W reklamach gabinetów w Zurychu nie znalazłam żadnej skupionej na mezoterapii twarzy z podaną ceną, więc tu się wyróżniasz. Tę strukturę stosowałam już w swoich kampaniach.</p></article>
-      <article class="ad"><div class="eyebrow">Reklama 2 · zmęczony wygląd</div><blockquote>Alle fragen, ob du müde bist. Dabei hast du acht Stunden geschlafen.</blockquote><div class="hl">Nagłówek<b>Trotz 8h Schlaf müder Blick im Spiegel?</b></div><p class="why"><b>Dlaczego ten kąt</b>Zaczyna od sytuacji, którą kobieta zna z życia, i daje konkretną obietnicę: świeża, wypoczęta cera, przy której nikt już nie pyta, czy jest zmęczona. Konkurencja pisze prawie wyłącznie o „Glow” i „Strahlen”, więc to zdanie brzmi inaczej.</p></article>
-      <article class="ad"><div class="eyebrow">Reklama 3 · czas dla siebie</div><blockquote>Haare machen alle sechs Wochen. Nägel alle drei Wochen. Und dein Gesicht?</blockquote><div class="hl">Nagłówek<b>Jetzt bist du dran: 90 Min. nur für dich</b></div><p class="why"><b>Dlaczego ten kąt</b>Trafia do kobiet, które nie widzą u siebie „problemu ze skórą”, ale regularnie dbają o siebie i o wszystkich dookoła. Analiza skóry jest w cenie, a 90 minut pokazuje, że to prawdziwy zabieg, nie szybki facial.</p></article>
-    </div>
-    <article class="gift">
-      <video src="prezent.mp4" poster="prezent-okladka.jpg" controls muted playsinline preload="metadata"></video>
-      <div>
-        <div class="eyebrow">Reklama 4 · prezent · pomysł na grudzień</div>
-        <blockquote>Männer aus Zürich: Noch kein Weihnachtsgeschenk für sie?</blockquote>
-        <p><strong>Dlaczego ten kąt:</strong> przed świętami mężczyźni szukają prezentu i mają na to budżet. To inna grupa niż w trzech pierwszych reklamach, więc nie zabiera im odbiorców. Sprzedajemy czas i przyjemność dla niej, nie „naprawę skóry”.</p>
-        <p><strong>Jak to widzę:</strong> osobna, mała reklama kierowana do mężczyzn, start pod koniec listopada, koniec przed świętami. Potrzebuję tylko wiedzieć, czy i jak sprzedajesz bony.</p>
-        <span class="pill p-now">Propozycja, do Twojej decyzji</span>
-      </div>
-    </article>
-  </section>
-
-  <section id="ujecia" hidden>
-    <div class="head">
-      <div><div class="eyebrow">Materiały</div><h2>Ujęcia do dogrania</h2></div>
-      <p>Twoje nagrania dobrze pokazują zabieg. Brakuje początków, które zatrzymują kciuk, i momentu „po”. Najważniejsze są pogrubione numery: 01, 02, 08 i 09.</p>
-    </div>
-    <div class="count"><b id="cnt">0 / 12</b><span>ujęć nagranych</span><div class="bar"><i id="cntbar" style="width:0"></i></div></div>
-    <div class="two">
-      <div>
-        <h3 class="grp">Hooki: pierwsze 3 sekundy reklamy</h3>
-        <ol class="shots">
-          <li class="key"><div><strong>Zakładasz rękawiczkę,</strong> patrzysz w kamerę i się uśmiechasz.</div></li>
-          <li class="key"><div><strong>Zakładasz okulary</strong> i pochylasz się nad twarzą klientki.</div></li>
-          <li><div><strong>Otwierasz drzwi gabinetu</strong> w stronę kamery i gestem zapraszasz do środka.</div></li>
-          <li><div><strong>Obracasz ekran z analizą skóry</strong> w stronę kamery i pokazujesz na niego palcem.</div></li>
-          <li><div><strong>Klientka ściera makijaż</strong> z policzka jednym ruchem wacika.</div></li>
-          <li><div><strong>Kropla serum z pipety</strong> spada na dłoń, z bardzo bliska.</div></li>
-          <li><div><strong>Wpisujesz termin do kalendarza</strong> długopisem, z bliska (do „tylko 14 miejsc”).</div></li>
-        </ol>
-        <h3 class="grp">Po zabiegu: zakończenie reklamy</h3>
-        <ol class="shots" style="counter-reset:s 7">
-          <li class="key"><div><strong>Klientka patrzy w lustro,</strong> dotyka policzka i się uśmiecha.</div></li>
-          <li class="key"><div><strong>Jej twarz z bliska</strong> bez makijażu, skóra już spokojna.</div></li>
-          <li><div><strong>Podajesz klientce lusterko</strong> i obie się uśmiechacie.</div></li>
-        </ol>
-        <h3 class="grp">W trakcie</h3>
-        <ol class="shots" style="counter-reset:s 10">
-          <li><div><strong>Klientka kładzie się na fotelu,</strong> a Ty okrywasz ją ręcznikiem.</div></li>
-          <li><div><strong>Peeling z bliska:</strong> nakładanie i zmywanie.</div></li>
-        </ol>
-      </div>
-      <div class="note">
-        <h3>Jak nagrywać</h3>
-        <p class="hint" style="margin:0 0 12px">Kliknij ujęcie, gdy je nagrasz. Zaznaczenia zapisują się na tym urządzeniu.</p>
-        <ul>
-          <li>Telefon pionowo, po 5–10 sekund na ujęcie, każde 2–3 razy.</li>
-          <li>Ruch zaczyna się od razu, w pierwszej sekundzie.</li>
-          <li>Twarz i dłonie na środku kadru, u góry i na dole zostaw miejsce na napisy.</li>
-          <li>Przy oknie, w dziennym świetle, bez lampy sufitowej.</li>
-          <li>Telefon nieruchomo albo bardzo powolny ruch.</li>
-          <li>W kadrze bez strzykawek i ampułek.</li>
-          <li>Jeśli się da, inna klientka niż dotychczas, z jej zgodą na reklamę.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section id="strona">
-    <div class="head">
-      <div><div class="eyebrow">Odpowiedzi na Twoje pytania</div><h2>Strona, katalogi, newsletter</h2></div>
-      <p>Pytałaś o pozycjonowanie strony, o synchronizację wpisów w katalogach i o maila do klientek. Stan na 16.11.2026.</p>
-    </div>
-    <div class="site">
-      <div>
-        <p>Sprawdziłam wszystkie 35 adresów z mapy Twojej strony (25 podstron i 10 wpisów na blogu). W kodzie każdego jest znacznik <strong>„noindex, nofollow”</strong>. To polecenie dla Google: „nie pokazuj tej strony w wynikach”.</p>
-        <p>W wyszukiwarce, której użyłam do testu, nie znalazłam ani jednej podstrony z Twojej domeny. Po wpisaniu nazwy gabinetu wyskakują Treatwell, Fresha i Trustindex, a Twojej strony nie ma.</p>
-        <p>Najczęstsza przyczyna to jedno zaznaczone pole w WordPress (Ustawienia → Czytanie), które zostaje po budowie strony. Jeśli to ono, naprawa zajmuje kilka minut. Musi to sprawdzić osoba, która ma dostęp do panelu strony.</p>
-        <p class="muted">To ważniejsze niż płatne wpisy do katalogów: dopóki strona jest ukryta przed wyszukiwarkami, nie znajdą jej ani ludzie, ani programy AI.</p>
-      </div>
-      <div class="check">
-        <div class="eyebrow">Sprawdź sama w 10 sekund</div>
-        <code>site:joamedicalbeauty.ch</code>
-        <p style="margin:0;font-size:15px;color:var(--soft)">Wpisz to w Google. Jeśli wyników nie ma albo jest ich kilka, strona jest dla Google niewidoczna. Samego Google nie mogłam sprawdzić za Ciebie, dlatego ten test jest ważny.</p>
-      </div>
-    </div>
-    <div class="answers">
-      <article class="ans">
-        <div class="eyebrow">Pozycjonowanie strony</div>
-        <h3>Co jeszcze poprawić na stronie</h3>
-        <ul>
-          <li>Działają dwie wtyczki SEO naraz: Yoast i Rank Math. Obie są widoczne w kodzie strony. Powinna zostać jedna.</li>
-          <li>Na wszystkich 35 adresach pierwszy główny nagłówek brzmi „HydraFacial® in Zürich”, także na Mesoject i Lumiscan. Pochodzi z górnego banera.</li>
-          <li>Strona główna nazywa się w Google „Home – JOA”, a kontakt „kontakt – JOA”. Cztery strony zabiegów (Mesoject, Dermaplaning, SkinCeuticals, Deep Shoot) mają opis z trzech słów: „bei JOA Medical Beauty”.</li>
-          <li>Strona Lumiscan wskazuje stronę główną jako swój oryginał. Trzy podstrony mają też dwa sprzeczne znaczniki naraz („pokazuj” i „nie pokazuj”).</li>
-          <li>Na stronie głównej są podpięte dwa zdjęcia w pełnej rozdzielczości: jedno waży 26 MB, drugie 11 MB. To bardzo spowalnia stronę, zwłaszcza na telefonie.</li>
-        </ul>
-        <p class="verdict">Dobra wiadomość: treści jest dużo (opisy zabiegów, 10 wpisów na blogu), mapa strony działa, a 11 z 25 podstron ma już porządne tytuły z „Zürich”. Fundament jest, trzeba go odblokować.</p>
-      </article>
-      <article class="ans">
-        <div class="eyebrow">Listingstar / localsearch</div>
-        <h3>Synchronizacja 50 katalogów</h3>
-        <p>To abonament, który wysyła dane firmy (nazwa, adres, telefon, godziny) do ok. 50 katalogów, żeby wszędzie były takie same.</p>
-        <ul>
-          <li>Listingstar (cennik sprawdzony 16.11): od 39 do 79 € miesięcznie plus VAT, <strong>umowa minimum 12 miesięcy</strong>, pierwszy miesiąc gratis.</li>
-          <li>Reklamują się „lepszą widocznością w ChatGPT i Gemini”. To hasło reklamowe: na stronie nie ma żadnej gwarancji ani liczb.</li>
-          <li>W cenniku nie ma ani słowa o Szwajcarii, local.ch ani search.ch. Przed podpisaniem poproś ich o listę katalogów, do których trafisz jako firma z Zürichu.</li>
-          <li>Google, Apple Maps i Bing prowadzi się za darmo. Warunki wpisu w local.ch i search.ch sprawdzę osobno.</li>
-        </ul>
-        <p class="verdict">Moja rada: jeszcze nie teraz. Programy AI czytają to, co jest w wyszukiwarkach, a Twoja strona jest dziś przed nimi ukryta. Najpierw ją odblokuj i uzupełnij profil Google, a roczny abonament rozważ dopiero potem.</p>
-      </article>
-      <article class="ans mail" style="grid-column:1/-1">
-        <div class="eyebrow">Dla Twoich stałych klientek</div>
-        <h3>Newsletter</h3>
-        <ul>
-          <li><strong>Rabat 20% na 2–3 wybrane zabiegi.</strong></li>
-          <li><strong>Oferta ważna od 19.11 do 6.12.2026.</strong></li>
-        </ul>
-      </article>
-    </div>
-  </section>
-
-  <section id="zasady">
-    <div class="head"><div><div class="eyebrow">Współpraca</div><h2>Złote zasady</h2></div></div>
-    <div class="rules">
-      <div><h3>Nie szukaj ideałów</h3><p>Przesyłaj wszystko. Naturalne ujęcia często działają najlepiej.</p></div>
-      <div><h3>Telefon wystarczy</h3><p>Nie potrzebujemy sesji zdjęciowej ani sprzętu.</p></div>
-      <div><h3>Ty treść, ja kampania</h3><p>Dajesz materiały i decyzje, resztę układam ja.</p></div>
-      <div><h3>Bez ukrytych kosztów</h3><p>Budżet płacisz sama do Mety. Ustawimy razem limit wydatków konta.</p></div>
-    </div>
-  </section>
-
-  <footer><span>Konstancja Martynowska · Meta Ads</span><span>konstancjamartynowska.ch</span></footer>
-</div>
 <script>
-(function(){
-  var KEY='joa-panel-odhaczone-v1', state={};
-  try{ state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){ state={}; }
-  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
-  function make(id,label){
-    var c=document.createElement('input'); c.type='checkbox'; c.className='tick'; c.id=id;
-    c.setAttribute('aria-label',label); c.checked=!!state[id]; return c;
+(() => {
+  const $ = id => document.getElementById(id);
+
+  const CALL = [
+    { h: 'Powitanie',
+      pl: 'Jeśli nie ma czasu: „Kein Problem. Passt es dir besser heute Abend oder morgen am Vormittag?”',
+      de: 'Hallo [Vorname], hier ist Joanna von JOA Medical Beauty in Zürich. Du hast gerade das Formular zur nadellosen Mesotherapie ausgefüllt. Hast du kurz zwei Minuten?' },
+    { h: 'A · W mailu klientka wybrała: „Intensive Feuchtigkeit & Schluss mit Spannungsgefühl”',
+      de: 'Du hast angekreuzt, dass dir vor allem Feuchtigkeit wichtig ist. Genau dafür ist die Mesotherapie da: Hyaluron und Vitamine kommen tiefer in die Haut, als es eine Creme schafft. Viele Kundinnen sagen mir danach, dass sich ihre Haut praller und frischer anfühlt.' },
+    { h: 'B · W mailu klientka wybrała: „Einen frischen, wachen Teint statt müdem Blick”',
+      de: 'Du hast angekreuzt, dass du dir einen frischen, wachen Teint wünschst. Oft fehlt der Haut einfach Feuchtigkeit. Mit der Mesotherapie bekommt sie Hyaluron und Vitamine, und viele Kundinnen sagen mir danach, dass ihr Teint frischer und gleichmässiger wirkt.' },
+    { h: 'C · W mailu klientka wybrała: „Natürlichen Glow – auch komplett ohne Make-up”',
+      de: 'Du hast angekreuzt, dass du dich auch ohne Make-up wohlfühlen möchtest. Viele Kundinnen sagen mir nach der Mesotherapie, dass ihre Haut glatter und frischer wirkt, auch ganz ohne Make-up.' },
+    { h: 'D · W mailu klientka wybrała: „Endlich mal 90 Minuten Auszeit nur für mich”',
+      de: 'Du hast angekreuzt, dass du dir endlich mal 90 Minuten nur für dich wünschst. Bei mir kannst du dich einfach zurücklehnen, und deine Haut bekommt dabei Hyaluron und Vitamine.' },
+    { h: 'Jak wygląda wizyta (po A, B, C albo D)',
+      pl: 'Po cenie zrób krótką pauzę i od razu przejdź do terminu.',
+      de: 'So läuft dein Termin: Du bist 90 Minuten bei mir. Zuerst machen wir eine Hautanalyse mit LumiScan, dann ein Peeling, danach die nadellose Mesotherapie und zum Schluss eine Pflegemaske. Du bezahlst 247 statt 427 Franken, die Hautanalyse ist schon dabei.' }
+  ];
+
+  const CLOSE = [
+    { h: 'Proponujesz dwa terminy',
+      pl: '<strong>PRZYKŁAD: dni i godziny wstawiasz sama z kalendarza.</strong>',
+      de: 'Ich hätte am Dienstag um 10 Uhr oder am Donnerstag um 17 Uhr frei. Was passt dir besser?' },
+    { h: 'Wybrała termin',
+      pl: 'Powtórz dzień i godzinę na głos. Po rozmowie: termin do kalendarza i WhatsApp „Potwierdzenie terminu”.',
+      de: 'Super, dann trage ich dich ein. Ich schicke dir gleich eine Bestätigung per WhatsApp. Ich freue mich auf dich!' },
+    { h: 'Waha się albo chce się zastanowić',
+      pl: 'Bez naciskania. Po rozmowie WhatsApp „Podsumowanie” i odezwij się w dniu, który ustaliłyście.',
+      de: 'Kein Problem. Ich schicke dir alles kurz per WhatsApp, dann kannst du in Ruhe schauen. Darf ich mich übermorgen nochmals kurz melden?' }
+  ];
+
+  const WA = [
+    { h: 'Nie odebrała telefonu', when: 'od razu po nieodebranym telefonie',
+      de: 'Hallo [Vorname], hier ist Joanna von JOA Medical Beauty 😊 Danke für deine Anfrage zur nadellosen Mesotherapie! Ich habe gerade versucht, dich anzurufen. Ich probiere es gern nochmals zu der Zeit, die du im Formular angegeben hast. Oder sollen wir lieber kurz hier schreiben?' },
+    { h: 'Przypomnienie', when: 'po 1 dniu bez odpowiedzi',
+      de: 'Hallo [Vorname], hier ist nochmals Joanna von JOA 😊 Ich halte dir gern einen der 14 Plätze für 247 statt 427 Franken frei, Hautanalyse inklusive. Möchtest du lieber diese oder nächste Woche kommen?' },
+    { h: 'Ostatnia wiadomość', when: 'po 3 dniach, potem koniec',
+      de: 'Hallo [Vorname], hier ist Joanna. Ich möchte dich nicht stören, darum ist das meine letzte Nachricht. Wenn es im Moment nicht passt, ist das völlig okay. Soll ich dir deinen Platz noch freihalten?' },
+    { h: 'Podsumowanie', when: 'gdy chce się zastanowić',
+      de: 'Wie besprochen hier alles auf einen Blick:\n\nNadellose Mesotherapie, 90 Minuten:\n1. Hautanalyse mit LumiScan\n2. Peeling\n3. Nadellose Mesotherapie mit Hyaluron und Vitaminen\n4. Pflegemaske\n\nPreis: 247 CHF statt 427 CHF, Hautanalyse inklusive. Nur 14 Plätze.\n📍 Hottingerstrasse 35, 8032 Zürich\n\nIch melde mich wie besprochen wieder.' },
+    { h: 'Potwierdzenie terminu', when: 'zaraz po umówieniu',
+      de: 'Schön, dass es geklappt hat! Dein Termin ist eingetragen.\n\n📍 JOA Medical Beauty, Hottingerstrasse 35, 8032 Zürich\n⏱ Plane bitte etwa 90 Minuten ein.\nPreis: 247 CHF statt 427 CHF, Hautanalyse inklusive.\n\nFalls etwas dazwischenkommt, schreib mir bitte kurz. Bis bald, Joanna' },
+    { h: 'Przypomnienie dzień przed wizytą', when: 'jeśli kalendarz nie wysyła go sam',
+      de: 'Hallo [Vorname], hier ist Joanna 😊 Kleine Erinnerung: Morgen ist dein Termin bei mir an der Hottingerstrasse 35. Ich freue mich auf dich!' }
+  ];
+
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const fillHtml = t => esc(t).replace(/\[Vorname\]/g,'<b class="ph">[Vorname]</b>');
+
+  function block(item, copy){
+    const el = document.createElement('div');
+    el.className = 'step';
+    el.innerHTML =
+      `<div class="step-head"><h3>${esc(item.h)}</h3></div>` +
+      (item.when ? `<span class="when">${esc(item.when)}</span>` : '') +
+      `<div class="de" lang="de-CH">${fillHtml(item.de)}</div>` +
+      (item.pl ? `<p class="pl">${item.pl}</p>` : '') +
+      (copy ? `<div class="row"><button class="copy" type="button">Kopiuj</button></div>` : '');
+    if (!copy) return el;
+    const de = el.querySelector('.de'), btn = el.querySelector('.copy');
+    btn.addEventListener('click', () => {
+      const done = () => { btn.textContent = 'Skopiowane ✓'; btn.classList.add('ok'); setTimeout(() => { btn.textContent = 'Kopiuj'; btn.classList.remove('ok'); }, 1600); };
+      const fallback = () => { const r = document.createRange(); r.selectNodeContents(de); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Zaznaczone, skopiuj ⌘C'; };
+      try { navigator.clipboard.writeText(item.de).then(done, fallback); } catch (e) { fallback(); }
+    });
+    return el;
   }
-  var shots=[].slice.call(document.querySelectorAll('.shots li'));
-  function count(){
-    var n=shots.filter(function(li){return li.classList.contains('got');}).length;
-    document.getElementById('cnt').textContent=n+' / '+shots.length;
-    document.getElementById('cntbar').style.width=(shots.length?100*n/shots.length:0)+'%';
-  }
-  function bind(el,c){
-    function apply(){ el.classList.toggle('got',c.checked); state[c.id]=c.checked; save(); count(); }
-    c.addEventListener('change',apply);
-    el.addEventListener('click',function(e){ if(e.target!==c && !e.target.closest('a')){ c.checked=!c.checked; apply(); } });
-    el.classList.toggle('got',c.checked);
-  }
-  shots.forEach(function(li,i){
-    var c=make('ujecie-'+(i+1),'Nagrane: '+li.textContent.trim().slice(0,60)); li.appendChild(c); bind(li,c);
-  });
-  [].slice.call(document.querySelectorAll('.todo article')).forEach(function(a,i){
-    var pill=a.querySelector('.pill'), row=document.createElement('div'); row.className='row2';
-    pill.parentNode.insertBefore(row,pill); row.appendChild(pill);
-    var c=make('krok-'+(i+1),'Zrobione: '+a.querySelector('h3').textContent); row.appendChild(c);
-    a.style.cursor='pointer'; bind(a,c);
-  });
-  count();
+  const mount = (id, list, copy) => { const box = $(id); box.style.display = 'flex'; box.style.flexDirection = 'column'; box.style.gap = '12px'; list.forEach(it => box.appendChild(block(it, copy))); };
+  mount('call', CALL, false); mount('close', CLOSE, false); mount('wa', WA, true);
 })();
 </script>
+
 </body>
 </html>
